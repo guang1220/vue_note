@@ -1,0 +1,58 @@
+{
+  "id": "2544333",
+  "name": "icon",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "14313285",
+      "name": "重命名",
+      "font_class": "zhongmingming",
+      "unicode": "e654",
+      "unicode_decimal": 58964
+    },
+    {
+      "icon_id": "8412365",
+      "name": "保存",
+      "font_class": "baocun",
+      "unicode": "e6fe",
+      "unicode_decimal": 59134
+    },
+    {
+      "icon_id": "20163201",
+      "name": "移动",
+      "font_class": "yidong",
+      "unicode": "e63e",
+      "unicode_decimal": 58942
+    },
+    {
+      "icon_id": "6010917",
+      "name": "新增",
+      "font_class": "xinzeng",
+      "unicode": "e613",
+      "unicode_decimal": 58899
+    },
+    {
+      "icon_id": "9143186",
+      "name": "修改",
+      "font_class": "xiugai",
+      "unicode": "e7e4",
+      "unicode_decimal": 59364
+    },
+    {
+      "icon_id": "13000509",
+      "name": "删除",
+      "font_class": "shanchu",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "16323137",
+      "name": "笔记",
+      "font_class": "biji",
+      "unicode": "e70e",
+      "unicode_decimal": 59150
+    }
+  ]
+}

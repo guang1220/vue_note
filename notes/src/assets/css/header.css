@@ -1,0 +1,32 @@
+.header{
+  border-bottom: 1px solid #dcdfe6;
+  border-top: 1px solid #dcdfe6;
+  height: 80px;
+}
+
+/*导航菜单项*/
+.el-menu-demo li {
+  line-height: 80px;
+  font-size: 16px;
+}
+
+.menu-item {
+  margin-right: 100px;
+}
+
+.icon-biji {
+  font-size: 70px;
+  line-height: 80px;
+  margin-left: 100px;
+}
+
+.el-menu-demo li .Notes {
+  margin: 0 250px 0 20px;
+  font-size: 30px;
+  line-height: 0;
+}
+
+.searchInput {
+  margin-right: 200px;
+
+}
