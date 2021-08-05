@@ -13,7 +13,7 @@
         <el-container>
           <el-main>
             <div>
-              <ul class="search-ul"  v-if="!show">
+              <ul class="search-ul" v-if="!show">
                 <li v-for="(item,index) in noteList" :key="index" class="note-list" @click="noteListClick(item)">
                   <P>{{ item.title }}</P>
                   <span>创建: {{ item.createTime }}</span> <span>修改: {{ item.alterTime }}</span>
@@ -21,12 +21,48 @@
                 </li>
               </ul>
               <div class="main-content" v-if="show">
-                <p>{{currentNote.title}}</p>
-                <mavon-editor :ishljs="true" fontSize="18px" v-model="currentNote.content" ref="md"
-                              @save="save" :toolbars="{}" style="min-height: 710px;" v-show="isEdit"/>
-                <article id="article-main-page" class="article" ref="article" v-html="currentNote.html"
-                         v-show="!isEdit" style="font-size: 20px">
-                </article>
+                <p>{{ currentNote.title }}</p>
+                <mavon-editor :ishljs="false" fontSize="18px" v-model="currentNote.content" ref="md"
+                              @save="save" style="min-height: 710px;"  codeStyle="atom-one-dark" v-show="isEdit"
+                              v-highlight
+                              :toolbars="{bold: true, // 粗体
+                                          italic: true, // 斜体
+                                          header: true, // 标题
+                                          underline: true, // 下划线
+                                          strikethrough: true, // 中划线
+                                          mark: true, // 标记
+                                          superscript: true, // 上角标
+                                          subscript: true, // 下角标
+                                          quote: true, // 引用
+                                          ol: true, // 有序列表
+                                          ul: true, // 无序列表
+                                          link: true, // 链接
+                                          imagelink: true, // 图片链接
+                                          code: true, // code
+                                          table: true, // 表格
+                                          fullscreen: true, // 全屏编辑
+                                          readmodel: true, // 沉浸式阅读
+                                          htmlcode: true, // 展示html源码
+                                          help: true, // 帮助
+                                          /* 1.3.5 */
+                                          undo: true, // 上一步
+                                          redo: true, // 下一步
+                                          trash: true, // 清空
+                                          save: true, // 保存（触发events中的save事件）
+                                          /* 1.4.2 */
+                                          navigation: true, // 导航目录
+                                          /* 2.1.8 */
+                                          alignleft: true, // 左对齐
+                                          aligncenter: true, // 居中
+                                          alignright: true, // 右对齐
+                                          /* 2.2.1 */
+                                          subfield: true, // 单双栏模式
+                                          preview: true, }"
+                />
+
+                <div id="article-main-page" class="article" ref="article" v-html="html"
+                         v-highlight v-show="!isEdit" style="font-size: 20px">
+                </div>
               </div>
             </div>
           </el-main>
@@ -76,7 +112,7 @@
     </el-dialog>
     <!--移动表单-->
     <el-dialog title="Note" :visible.sync="moveFormVisible">
-      <p>当前要移动的文件为:<strong style="font-size: 20px"> {{currentNote.title}}</strong></p>
+      <p>当前要移动的文件为:<strong style="font-size: 20px"> {{ currentNote.title }}</strong></p>
       <p>请选择要移动到的文件夹</p>
       <el-select v-model="selectedValue" placeholder="请选择">
         <el-option v-for="item in folder" :key="item.id" :label="item.name" :value="item.id">
@@ -87,17 +123,17 @@
         <el-button type="primary" @click="moveNote">确 定</el-button>
       </div>
     </el-dialog>
-<!--删除表单-->
+    <!--删除表单-->
     <el-dialog title="Note" :visible.sync="delFormVisible">
-      <p>当前要删除的文件为:<strong style="font-size: 20px"> {{currentNote.title}}</strong></p>
+      <p>当前要删除的文件为:<strong style="font-size: 20px"> {{ currentNote.title }}</strong></p>
       <div slot="footer" class="dialog-footer">
         <el-button @click="delFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="delNote">确 定</el-button>
       </div>
     </el-dialog>
-<!--    重命名表单-->
+    <!--    重命名表单-->
     <el-dialog title="Note" :visible.sync="renameFormVisible">
-      <p>当前重命名的文件为:<strong style="font-size: 20px"> {{currentNote.title}}</strong></p>
+      <p>当前重命名的文件为:<strong style="font-size: 20px"> {{ currentNote.title }}</strong></p>
       <el-input placeholder="请输入内容" v-model="reName" clearable>
       </el-input>
       <div slot="footer" class="dialog-footer">
@@ -115,16 +151,20 @@ import {mapGetters} from 'vuex'
 import {mavonEditor} from 'mavon-editor'
 import Header from "../components/Header";
 import LeftAside from "../components/LeftAside";
+import marked from 'marked'
+
 
 export default {
   name: "Home",
-  components: { LeftAside, Header,mavonEditor},
+  components: {LeftAside, Header, mavonEditor},
   computed: {
     ...mapGetters([
       'currentNoteId',
     ])
   },
-
+  // mounted() {
+  //   hljs.highlightCode()
+  // },
   data() {
     return {
       currentNote: {},
@@ -132,13 +172,14 @@ export default {
       isEdit: false,
       addFormVisible: false,
       moveFormVisible: false,
-      delFormVisible:false,
-      renameFormVisible:false,
+      delFormVisible: false,
+      renameFormVisible: false,
       title: '',
       folder: [],
       selectedValue: '',
       noteList: [],
-      reName:''
+      reName: '',
+      html:''
     };
   },
   methods: {
@@ -147,11 +188,11 @@ export default {
       else if (this.show) this.show = false
     },
     delBtn() {
-      if(this.currentNote.title===undefined) return
-      this.delFormVisible=true
+      if (this.currentNote.title === undefined) return
+      this.delFormVisible = true
     },
-    delNote(){
-      this.delFormVisible=false
+    delNote() {
+      this.delFormVisible = false
       deleteNote(this.currentNoteId).then(res => {
         if (res.data === 1) {
           this.$message({
@@ -178,7 +219,7 @@ export default {
       } else this.addFormVisible = true;
     },
     moveBtn() {
-      if(this.currentNote.title===undefined) return
+      if (this.currentNote.title === undefined) return
       if (this.folder.length === 0) {
         getFolder().then(res => {
           if (res.data) {
@@ -205,7 +246,7 @@ export default {
           });
           // this.$router.go(0)
           this.show = true;
-          this.isEdit=true;
+          this.isEdit = true;
         } else {
           this.$message({
             type: 'error',
@@ -214,9 +255,9 @@ export default {
         }
       })
     },
-    renameBtn(){
-      if(this.currentNote.title===undefined) return
-      this.renameFormVisible=true
+    renameBtn() {
+      if (this.currentNote.title === undefined) return
+      this.renameFormVisible = true
     },
     moveNote() {
       this.moveFormVisible = false
@@ -240,7 +281,7 @@ export default {
 
     },
     search(key) {
-      this.show=false
+      this.show = false
       getNote(key).then(res => {
         if (res.data) {
           this.noteList = res.data;
@@ -249,10 +290,11 @@ export default {
     },
     noteListClick(item) {
       this.$store.commit("setCurrentNoteId", item.id);
-      this.currentNote=item
+      this.currentNote = item
       this.show = true
     },
     showNote(note) {
+      this.html=marked(note.content)
       this.currentNote = note;
       this.show = true
     },
@@ -260,8 +302,7 @@ export default {
       let params = new URLSearchParams();
       params.append('id', this.currentNoteId);
       params.append('content', value);
-      params.append('html', render);
-      this.currentNote.html=render
+      this.html = render
       updateNote(params).then(res => {
         if (res.data === 1) {
           this.$message({
@@ -277,7 +318,7 @@ export default {
         }
       })
     },
-    rename(){
+    rename() {
       let params = new URLSearchParams();
       params.append('id', this.currentNoteId);
       params.append('title', this.reName);

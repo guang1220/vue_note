@@ -6,9 +6,9 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 
 export function request(config) {
   const install = axios.create({
-    // baseURL:'http://115.159.209.160:8080/note',
     // baseURL:'http://120.77.206.88:80/notes',
-      baseURL: '/api',
+    baseURL:'/notes',
+    //   baseURL: '/api',
     timeout: 10000,
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded'
